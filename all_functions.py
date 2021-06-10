@@ -4,6 +4,12 @@ from math import sqrt, exp, cos, sin, pi, e
 def Rosenbrock(x, y):
     return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
 
+def Rosenbrock(x):
+    sum = 0
+    for i in range(x.__len__() - 1):
+        sum = sum + 100 * (x[i + 1] - x[i] ** 2) ** 2
+    return sum
+
 def Rastrigin(x, y):
     return 20 + x ** 2 + y ** 2 - 10 * (cos(2 * pi * x) + cos(2 * pi * y))
 
