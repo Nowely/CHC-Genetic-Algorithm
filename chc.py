@@ -118,19 +118,27 @@ class Genetic:
         population = [Individual(*pack) for _ in range(self.individuals_number)]
         retry_count = 0
 
-        # ЗАпускаем алгоритм
+        #TODO добавить обработку для случая с меньшем, чем размер популяции колв-ом
+        # Запускаем алгоритм
         for _ in range(self.number_lives):
 
             crossing_count = 0
             new_population = population.copy()
             for individual_1 in population:
                 population.remove(individual_1)
-                # находим случайную пар
                 if population.__len__() == 0:
                     break
-                individual_2 = random.choice(population)
-                population.remove(individual_2)
-                if self.calculate_distance(individual_1, individual_2) < self.delta:
+                # Вырождение удаляем клонов
+                while True:
+                    # находим случайную пар
+                    individual_2 = random.choice(population)
+                    population.remove(individual_2)
+                    dist = self.calculate_distance(individual_1, individual_2)
+                    if dist != 0:
+                        break
+                    new_population.remove(individual_2)
+
+                if dist < self.delta:
                     child_1, child_2 = self.crossing(individual_1, individual_2)
                     child_1.calculate_fitness()
                     child_2.calculate_fitness()
@@ -154,6 +162,7 @@ class Genetic:
                 self.best_fitness = population[0].fitness
                 self.best_genome = population[0].genome.copy()
 
+            # TODO условия ерезапуска алгоритма
             if crossing_count == 20:
                 retry_count = retry_count + 1
             if retry_count == 100:
